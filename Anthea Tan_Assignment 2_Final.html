@@ -755,6 +755,101 @@
             animation: pulseRedWhite 1s infinite;
         }
 
+        @media only screen and (max-width: 600px) and (orientation: portrait) {
+            #container {
+                width: 100vw;
+                height: 100vh;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            #background-video {
+                min-width: 100vw;
+                min-height: 100vh;
+                left: 50%;
+            }
+
+            #intro, #instructions, #screen, #story-intro {
+                padding: 1rem;
+                margin: 0;
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1rem;
+            }
+
+            p, button {
+                font-size: 1rem;
+            }
+
+            #code-entry {
+                width: 90%;
+                height: auto;
+                padding: 1rem;
+            }
+
+            #sequence-input {
+                font-size: 1rem;
+                width: 80%;
+            }
+
+            #submit-sequence-btn {
+                font-size: 1rem;
+                padding: 0.6rem 1rem;
+            }
+
+            #enter-cockpit-btn {
+                font-size: 1.2rem;
+                padding: 0.8rem 1.5rem;
+                bottom: 100px;
+            }
+
+            #timer {
+                top: 10px;
+                right: 10px;
+                font-size: 1.5rem;
+            }
+
+            #instructions-btn,
+            #clue-btn {
+                top: 10px;
+                right: auto;
+                left: 10px;
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+
+            #clue-btn {
+                top: 60px;
+            }
+
+            .clue-image {
+                width: 12vw;
+            }
+
+            #textbox {
+                font-size: 1rem;
+                width: 95%;
+            }
+
+            #success-screen-message h1,
+            #end-screen-message h1 {
+                font-size: 2rem;
+                margin-top: 100px;
+            }
+
+            #recap-btn,
+            #back-to-success-btn {
+                margin: 1rem auto;
+                max-width: 80%;
+            }
+        }
+
     </style>
     </head>
 
