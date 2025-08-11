@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+  <title>Ambassador's Duty Sign-Up</title>
+
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 40px;
+    background-color: #f9f9f9;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 50px;
+    margin-bottom: 20px;
+  }
+
+  .link-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .link-box a {
+    font-size: 16px;
+    color: #2f4e98;
+    text-decoration: underline;
+    margin-bottom: 40px;
+  }
+
+  table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    table-layout: fixed; /* Ensures consistent widths */
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 20px 12px;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  th {
+    background-color: #2f4e98;
+    color: white;
+  }
+
+  #eventTable tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+  }
+
+  #eventTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2 !important;
+  }
+
+  .signup-btn {
+    padding: 4px 10px;
+    font-size: 16px;
+    background-color: #2f4e98;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+    .signup-btn-1 {
+    padding: 10px 10px;
+    font-size: 16px;
+    background-color: #2f4e98;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .signup-btn:hover {
+    background-color: #1d3470;
+  }
+
+  thead th:nth-child(1) { width: 25%; } /* Event Name */
+  thead th:nth-child(2) { width: 9%; } /* Day */
+  thead th:nth-child(3) { width: 9%; } /* Date */
+  thead th:nth-child(4) { width: 15%; } /* Time */
+  thead th:nth-child(5) { width: 14%; } /* Needed */
+  thead th:nth-child(6) { width: 10%; } /* Action */
+
+  .dataTables_wrapper {
+    width: 95%;
+    margin: 0 auto 30px auto; /* center + bottom spacing */
+  }
+
+  .dataTables_length, .dataTables_filter {
+    margin-bottom: 16px;
+  }
+
+  .dataTables_length {
+    float: left;
+  }
+
+  .dataTables_filter {
+    float: right;
+  }
+
+  .dataTables_paginate .paginate_button {
+    font-size: 14px !important;
+    padding: 4px 8px !important;
+    margin: 0 2px;
+    border-radius: 4px;
+  }
+
+  @media only screen and (max-width: 600px) and (orientation: portrait) {
+    body {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+    }
+
+    .link-box a {
+      display: block;
+      word-break: break-word;
+      font-size: 14px;
+    }
+
+    table {
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 8px;
+    }
+
+    .signup-btn {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 3px;
+    }
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tr {
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #fff;
+    }
+
+    td {
+      text-align: left;
+      padding-left: 50%;
+      position: relative;
+    }
+
+    td::before {
+      position: absolute;
+      top: 12px;
+      left: 10px;
+      width: 45%;
+      white-space: nowrap;
+      font-weight: bold;
+      color: #2f4e98;
+    }
+
+    td:nth-of-type(1)::before { content: "Event Name"; }
+    td:nth-of-type(2)::before { content: "Event Day"; }
+    td:nth-of-type(3)::before { content: "Event Date"; }
+    td:nth-of-type(4)::before { content: "Time"; }
+    td:nth-of-type(5)::before { content: "Ambassadors Needed"; }
+    td:nth-of-type(6)::before { content: "Action"; }
+  }
+  
+  /* Small centered modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: none; align-items: center; justify-content: center;
+    z-index: 9999;
+  }
+  .modal-backdrop[hidden] { display: none; }
+  .modal-backdrop:not([hidden]) { display: flex; }
+
+  .modal {
+    background: #fff;
+    width: min(420px, 92%);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+  }
+
+  .modal h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    color: #2f4e98;
+  }
+
+  .modal p {
+    margin: 0 0 16px;
+    line-height: 1.45;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal-actions button {
+    padding: 10px 10px; border: 1px solid #ccc;
+    background: #f7f7f7; border-radius: 6px; cursor: pointer;
+  }
+  .modal-actions a.signup-btn { text-decoration: none; }
+
+  /* Prevent background scroll when modal is open */
+  body.no-scroll { overflow: hidden; }
+
+  </style>
+</head>
+<body>
+
+  <h1>Ambassador's Duty Sign-Up</h1>
+
+  <div class="link-box">
+    For any issues and/or concerns, please contact the Operations Team through Telegram or Email. 📌
+    <a href="mailto:ambsoperationsdept@gmail.com">
+      ambsoperationsdept@gmail.com
+    </a>
+  </div>
+
+  <table id="eventTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Event Name</th>
+        <th onclick="sortTable(1)">Event Day</th>
+        <th onclick="sortTable(2)">Event Date</th>
+        <th onclick="sortTable(3)">Time</th>
+        <th onclick="sortTable(4)">Ambassadors Needed</th>
+        <th onclick="sortTable(5)">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>[TEST] Booth in Compassvale Sec Sch</td>
+        <td>Mon</td>
+        <td>01/09/25</td>
+        <td>10.00am to 12.00pm</td>
+        <td>4</td>
+        <td><a class="signup-btn" href="https://cal.gov.sg/ts7s4kqxx908qslgwinxytqz" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>[TEST] Youth Leaders Camp 2025 - Y2 & Y3s</td>
+        <td>Wed</td>
+        <td>09/09/25 - 10/09/25</td>
+        <td>8.00am to 8.00pm</td>
+        <td>45</td>
+        <td><a class="signup-btn" href="https://cal.gov.sg/4yzh2k9tputum4166p6jo5qv" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>[TEST] Learning Journey for Christ Church Sec Sch</td>
+        <td>Wed</td>
+        <td>11/09/25</td>
+        <td>8.30am to 10.00am</td>
+        <td>6</td>
+        <td><a class="signup-btn" href="https://cal.gov.sg/0v6m3kcyrn6ky6ixso41tdat" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Singapore Chinese Girls Sch</td>
+        <td>Wed</td>
+        <td>06/08/25</td>
+        <td>7.50 to 8.50am</td>
+        <td>4</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Bendemeer Sec Sch</td>
+        <td>Tue</td>
+        <td>03/09/25</td>
+        <td>9.00am to 10.30am</td>
+        <td>3</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in CHIJ St. Nicholas Girls' School</td>
+        <td>Thu</td>
+        <td>05/09/25</td>
+        <td>12.00pm to 1.30pm</td>
+        <td>5</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Open House 2025</td>
+        <td>Fri</td>
+        <td>06/09/25</td>
+        <td>10.00am to 12.00pm</td>
+        <td>4</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Dunman High School</td>
+        <td>Mon</td>
+        <td>09/09/25</td>
+        <td>9.00am to 11.00am</td>
+        <td>3</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in River Valley High School</td>
+        <td>Tue</td>
+        <td>10/09/25</td>
+        <td>2.00pm to 4.00pm</td>
+        <td>2</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Anglo-Chinese School (Barker)</td>
+        <td>Wed</td>
+        <td>11/09/25</td>
+        <td>8.30am to 10.00am</td>
+        <td>5</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Catholic High School</td>
+        <td>Thu</td>
+        <td>12/09/25</td>
+        <td>11.00am to 12.30pm</td>
+        <td>3</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Tanjong Katong Girls' School</td>
+        <td>Fri</td>
+        <td>13/09/25</td>
+        <td>1.00pm to 2.00pm</td>
+        <td>6</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Nan Hua High School</td>
+        <td>Mon</td>
+        <td>16/09/25</td>
+        <td>10.00am to 11.30am</td>
+        <td>2</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in St. Margaret's Secondary School</td>
+        <td>Tue</td>
+        <td>17/09/25</td>
+        <td>9.00am to 10.00am</td>
+        <td>3</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Raffles Institution</td>
+        <td>Wed</td>
+        <td>18/09/25</td>
+        <td>12.00pm to 1.00pm</td>
+        <td>5</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Bukit View Secondary School</td>
+        <td>Thu</td>
+        <td>19/09/25</td>
+        <td>10.30am to 12.00pm</td>
+        <td>4</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in CHIJ Katong Convent</td>
+        <td>Fri</td>
+        <td>20/09/25</td>
+        <td>2.00pm to 3.30pm</td>
+        <td>2</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Cedar Girls' Secondary School</td>
+        <td>Mon</td>
+        <td>23/09/25</td>
+        <td>9.30am to 11.00am</td>
+        <td>3</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Peirce Secondary School</td>
+        <td>Tue</td>
+        <td>24/09/25</td>
+        <td>11.00am to 12.30pm</td>
+        <td>4</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Temasek Secondary School</td>
+        <td>Wed</td>
+        <td>25/09/25</td>
+        <td>10.00am to 11.15am</td>
+        <td>2</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Paya Lebar Methodist Girls' School</td>
+        <td>Thu</td>
+        <td>26/09/25</td>
+        <td>1.30pm to 3.00pm</td>
+        <td>6</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+      <tr>
+        <td>Booth in Yishun Town Secondary School</td>
+        <td>Fri</td>
+        <td>27/09/25</td>
+        <td>8.00am to 9.30am</td>
+        <td>3</td>
+        <td><a class="signup-btn" href="https://www.np.edu.sg/" target="_blank">Sign Up</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+  function filterTable() {
+    const input = document.getElementById("searchInput").value.toUpperCase();
+    const table = document.querySelector("table");
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+      const firstCell = rows[i].getElementsByTagName("td")[0];
+      if (firstCell) {
+        const text = firstCell.textContent || firstCell.innerText;
+        rows[i].style.display = text.toUpperCase().indexOf(input) > -1 ? "" : "none";
+      }
+    }
+  }
+
+  function sortTable(colIndex) {
+    const table = document.querySelector("table");
+    let switching = true;
+    let dir = "asc";
+    let switchCount = 0;
+
+    while (switching) {
+      switching = false;
+      const rows = table.rows;
+
+      for (let i = 1; i < rows.length - 1; i++) {
+        let shouldSwitch = false;
+        const x = rows[i].getElementsByTagName("td")[colIndex];
+        const y = rows[i + 1].getElementsByTagName("td")[colIndex];
+
+        if (!x || !y) continue;
+
+        const xContent = x.innerText.toLowerCase();
+        const yContent = y.innerText.toLowerCase();
+
+        if ((dir === "asc" && xContent > yContent) || (dir === "desc" && xContent < yContent)) {
+          shouldSwitch = true;
+          break;
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        switchCount++;
+      } else {
+        if (switchCount === 0 && dir === "asc") {
+          dir = "desc";
+          switching = true;
+        }
+      }
+    }
+  }
+
+  $(document).ready(function () {
+    $('#eventTable').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true
+    });
+  });
+  </script>
+
+  <script>
+  // Show remarks modal for all events (works with DataTables pagination/search)
+  $(document).on('click', 'a.signup-btn', function (e) {
+    const href = this.href;
+    const eventName = $(this).closest('tr').find('td').eq(0).text().trim().toLowerCase();
+      const remarksMap = {
+        'youth leaders camp': "Ensure that you're able to attend a facilitation training at 10am and day 0 briefing at 4pm on 8 Sep. All ambs have to be committed for both 2 days of YLC (9 & 10 Sep) before signing up.",
+        'christ church sec sch': "Direct bus driver to acad sch and conduct a quick tour of NP while on the bus. Join telegram group for details & updates: https://t.me/+H8LadsqXYhNiMTg1",
+        'compassvale sec sch': "Meet Jane at Sec Sch or NP (to confirm on telegram). Course counselling. Join telegram group for details & updates: https://t.me/+ox6q9pGDuP9jMzQ1",
+        };
+
+      let msg = "Text"; // default
+      for (const key in remarksMap) {
+        if (eventName.includes(key)) {
+          msg = remarksMap[key];
+          break;
+        }
+      }
+
+
+    e.preventDefault(); // open modal instead of navigating
+    $('#interstitialText').text(msg);
+    $('#proceedLink').attr('href', href);
+    $('#interstitial').removeAttr('hidden');
+    document.body.classList.add('no-scroll');
+    // Focus the Proceed button for accessibility
+    setTimeout(() => document.getElementById('proceedLink').focus(), 0);
+  });
+
+  // Close modal: Cancel, backdrop click, or ESC
+  $(document).on('click', '#cancelModal', function () {
+    closeModal();
+  });
+  $('#interstitial').on('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  function closeModal() {
+    const modal = document.getElementById('interstitial');
+    if (!modal.hasAttribute('hidden')) {
+      modal.setAttribute('hidden', '');
+      document.body.classList.remove('no-scroll');
+    }
+  }
+  </script>
+
+<footer id="last-updated" style="margin:24px auto 0; width:95%; text-align:center; color:#555; font-size:14px;">
+  <span>Last updated: <strong id="lastUpdatedText">loading…</strong></span>
+</footer>
+
+<script>
+(function () {
+  function ready(fn){ if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  function fmt(d){
+    try {
+      return new Intl.DateTimeFormat('en-SG', {
+        timeZone: 'Asia/Singapore',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+      }).format(d).replace(',', '') + ' (SGT)';
+    } catch { return d.toLocaleString(); }
+  }
+  ready(async function () {
+    const el = document.getElementById('lastUpdatedText');
+    const OWNER = 'antheatann';
+    const REPO  = 'antheatann.github.io';
+    const FILE  = 'ambassadors.html'; // update if you move the file into a folder
+
+    // 1) Exact commit time via GitHub API
+    try {
+      const api = `https://api.github.com/repos/${OWNER}/${REPO}/commits?path=${encodeURIComponent(FILE)}&per_page=1`;
+      const r = await fetch(api, { headers: { 'Accept': 'application/vnd.github+json' }});
+      if (!r.ok) throw new Error('API status ' + r.status);
+      const data = await r.json();
+      const iso = data?.[0]?.commit?.committer?.date || data?.[0]?.commit?.author?.date;
+      if (iso) { el.textContent = fmt(new Date(iso)); return; }
+    } catch {}
+
+    // 2) Fallback: Last-Modified header from this page
+    try {
+      const r = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+      const lm = r.headers.get('last-modified');
+      if (lm) { el.textContent = fmt(new Date(lm)); return; }
+    } catch {}
+
+    // 3) Final fallback: document.lastModified
+    const d = new Date(document.lastModified);
+    el.textContent = isNaN(d) ? 'Unavailable' : fmt(d);
+  });
+})();
+</script>
+
+<!-- Small centered remarks modal -->
+<div id="interstitial" class="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="interTitle">
+    <h2 id="interTitle">Take Note:</h2>
+    <p id="interstitialText"></p>
+    <div class="modal-actions">
+      <button id="cancelModal" type="button">Cancel</button>
+      <a id="proceedLink" class="signup-btn-1" href="#" target="_blank" rel="noopener">Proceed</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
